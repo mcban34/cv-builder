@@ -13,20 +13,26 @@ function App() {
   const auth = getAuth();
   const navigate = useNavigate()
   const setUser = useUserStore(state => state.setUser);
+  const myUser = useUserStore(state => state.user);
+  // const Loginuser = useUserStore(user);
 
   //!giriş kontrolü sürekli sağlandı
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       navigate('/home');
-  //       setUser(user)
-  //     }
-  //     else {
-  //       navigate('/');
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, [navigate]);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // navigate('/home');
+        setUser(user)
+      }
+      // else {
+      //   navigate('/');
+      // }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // console.log(myUser);
+
+ 
 
   return (
     <>

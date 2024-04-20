@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, collection, getDocs, } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, } from "firebase/firestore";
 import {
   signInWithEmailAndPassword,
   signOut,
@@ -37,4 +37,5 @@ export {
   signInWithPopup,
   collection,
   getDocs,
+  getDoc
 };
