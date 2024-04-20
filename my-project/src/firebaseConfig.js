@@ -1,5 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getFirestore, doc, setDoc, collection, getDocs, } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth
+} from "firebase/auth";
+
+
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_REACT_APP_FIREBASE_API_KEY,
@@ -14,4 +24,17 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-export { auth,app };
+export {
+  auth,
+  app,
+  getFirestore,
+  doc,
+  setDoc,
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  collection,
+  getDocs,
+};

@@ -1,6 +1,7 @@
 import create from 'zustand';
-import { auth } from '../firebaseConfig';
-import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getFirestore, doc, setDoc } from '../firebaseConfig';
+
+const db = getFirestore();
 
 const useUserStore = create(set => ({
     user: null,
@@ -17,10 +18,19 @@ const useUserStore = create(set => ({
         await signOut(auth);
         set({ user: null });
     },
-    registerUser: async (email, password) => {
+    registerUser: async (email, password, additionalUserInfo) => {
         try {
-            await createUserWithEmailAndPassword(auth, email, password);
-            console.log("Kayıt başarılı!");
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            //!kullanıcın uid'si ile db'ye bir adet koleksiyon oluşturduk
+            await setDoc(doc(db, "users", user.uid), {
+                ...additionalUserInfo,
+                mail: user.email,
+                selectedTheme: ""
+            });
+            set({ user });
+            console.log("Kullanıcı kaydı ve profil oluşturma başarılı");
         } catch (error) {
             console.error("Kayıt hatası: ", error.message);
             throw error;

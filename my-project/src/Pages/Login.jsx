@@ -1,4 +1,3 @@
-// src/components/LoginForm.js
 import React, { useEffect, useState } from 'react';
 import useUserStore from '../store/useUserStore';
 import { Tabs, TabsHeader, TabsBody, Tab, TabPanel } from "@material-tailwind/react";
@@ -12,10 +11,10 @@ const LoginForm = () => {
         login: { email: "", password: "" },
         register: { email: "", password: "" }
     })
+
     const loginUser = useUserStore(state => state.loginUser);
     const registerUser = useUserStore(state => state.registerUser);
     const loginGoogle = useUserStore(state => state.loginWithGoogle);
-
 
     const handleloginSubmit = async (event) => {
         event.preventDefault();
