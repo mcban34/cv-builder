@@ -2,20 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useUserStore from '../store/useUserStore';
 import { collection, getDocs, getFirestore } from '../firebaseConfig';
+import { useStore } from 'zustand';
+import stores from '../store/useCvSrote';
 
 
 function Index() {
   const [cvThemes, setCvThemes] = useState([]);
   const db = getFirestore();
   const logout = useUserStore(state => state.logoutUser);
+  const { useCvThemeStore } = stores;
+  const setStoreCvTheme = useCvThemeStore(state => state.setCvTheme);
 
   //!cvThemes koleksiyonu çekildi ve stateye kaydedildi
   useEffect(() => {
     const fetchCvThemes = async () => {
       const querySnapshot = await getDocs(collection(db, "cvThemes"));
       setCvThemes(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setStoreCvTheme(querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
     };
-
     fetchCvThemes();
   }, []);
 

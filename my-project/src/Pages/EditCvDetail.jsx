@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { getDoc, doc, getFirestore, setDoc } from '../firebaseConfig';
-import { useNavigate, useParams  } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useUserStore from '../store/useUserStore';
-
+import stores from '../store/useCvSrote';
 
 function EditCvDetail() {
-    
-    const {id , themeId} = useParams()
+
+    const { id, themeId } = useParams()
     const db = getFirestore();
-    const navigate =  useNavigate()
+    const navigate = useNavigate()
     const storeUser = useUserStore(state => state.user);
-    const [cvData, setCvData] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [cvDetails, setCvDetails] = useState({
+    const [cvThemeData, setCvThemeData] = useState([])
+    const [userData, setUserData] = useState({
         personalInfo: { firstName: '', lastName: '', email: '', phone: '' },
         summary: '',
         experience: [{ companyName: '', position: '', startDate: '', endDate: '', description: '' }],
@@ -22,41 +22,58 @@ function EditCvDetail() {
         projects: [{ projectName: '', description: '', url: '' }]
     });
 
+    const { useCvThemeStore, useCvDataStore } = stores;
+    const storeCvTheme = useCvThemeStore(state => state.cvTheme);
+    const setStoreUserData = useCvDataStore(state => state.setCvData);
+    const storeUserData = useCvDataStore(state => state.cvData);
+
     //!id'ye göre istek atıldı cv tema dataları state'e aktarıldı
     useEffect(() => {
-        const fetchCvDetail = async () => {
-            const docRef = doc(db, "cvThemes", id);
-            const docSnap = await getDoc(docRef);
+        if (storeCvTheme != null) {
+            const findTheme = storeCvTheme.find(item => item.themeId == themeId)
+            setCvThemeData(findTheme)
+            setIsLoading(false)
+        }
+        else {
+            const fetchCvDetail = async () => {
+                const docRef = doc(db, "cvThemes", id);
+                const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists()) {
-                setCvData(docSnap.data());
-                setIsLoading(false)
-            } else {
-                console.log("No such document!");
-            }
-        };
-
-        fetchCvDetail();
+                if (docSnap.exists()) {
+                    setCvThemeData(docSnap.data());
+                    setIsLoading(false)
+                } else {
+                    console.log("No such document!");
+                }
+            };
+            fetchCvDetail();
+        }
     }, [id])
 
     //!eğer kullanıcın girdiği bilgiler varsa, initial state içerisi doldurulur
     useEffect(() => {
         const fetchCvDetails = async (userId) => {
             if (!userId) return; //?Eğer userId yoksa, fonksiyonu sonlandır.
-    
-            const docRef = doc(db, "users", userId, "cvDetails", "details");
-            try {
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    setCvDetails(docSnap.data());
-                } else {
-                    console.log("No CV details found!");
+            
+            if (storeUserData != null) {
+                setUserData(storeUserData)
+            }
+            else {
+                const docRef = doc(db, "users", userId, "cvDetails", "details");
+                try {
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setUserData(docSnap.data());
+                        setStoreUserData(docSnap.data())
+                    } else {
+                        console.log("No CV details found!");
+                    }
+                } catch (error) {
+                    console.error("Error fetching CV details:", error);
                 }
-            } catch (error) {
-                console.error("Error fetching CV details:", error);
             }
         };
-    
+
         if (storeUser && storeUser.uid) {
             fetchCvDetails(storeUser.uid);
         }
@@ -77,7 +94,7 @@ function EditCvDetail() {
 
     //!Eleman Ekle
     const addItem = (section) => {
-        setCvDetails(prevState => ({
+        setUserData(prevState => ({
             ...prevState,
             [section]: [...prevState[section], (section === 'skills' || section === 'languages') ? '' : {}]
         }));
@@ -85,7 +102,7 @@ function EditCvDetail() {
 
     //!Eleman Sil
     const removeItem = (section, index) => {
-        setCvDetails(prevState => ({
+        setUserData(prevState => ({
             ...prevState,
             [section]: prevState[section].filter((_, i) => i !== index)
         }));
@@ -93,7 +110,7 @@ function EditCvDetail() {
 
     //!Eleman Güncelle
     const updateItem = (section, index, field, value) => {
-        setCvDetails(prevState => {
+        setUserData(prevState => {
             if (Array.isArray(prevState[section]) && typeof prevState[section][0] === 'string') {
                 //?Eğer bölüm basit bir dizi ise (yani içerik string)
                 return {
@@ -127,10 +144,10 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Kişisel Bilgiler</h2>
-                        <input type="text" placeholder="İsim" value={cvDetails.personalInfo.firstName} onChange={(e) => updateItem('personalInfo', null, 'firstName', e.target.value)} />
-                        <input type="text" placeholder="Soyisim" value={cvDetails.personalInfo.lastName} onChange={(e) => updateItem('personalInfo', null, 'lastName', e.target.value)} />
-                        <input type="email" placeholder="Email" value={cvDetails.personalInfo.email} onChange={(e) => updateItem('personalInfo', null, 'email', e.target.value)} />
-                        <input type="text" placeholder="Telefon" value={cvDetails.personalInfo.phone} onChange={(e) => updateItem('personalInfo', null, 'phone', e.target.value)} />
+                        <input type="text" placeholder="İsim" value={userData.personalInfo.firstName} onChange={(e) => updateItem('personalInfo', null, 'firstName', e.target.value)} />
+                        <input type="text" placeholder="Soyisim" value={userData.personalInfo.lastName} onChange={(e) => updateItem('personalInfo', null, 'lastName', e.target.value)} />
+                        <input type="email" placeholder="Email" value={userData.personalInfo.email} onChange={(e) => updateItem('personalInfo', null, 'email', e.target.value)} />
+                        <input type="text" placeholder="Telefon" value={userData.personalInfo.phone} onChange={(e) => updateItem('personalInfo', null, 'phone', e.target.value)} />
                     </div>
                 );
 
@@ -138,7 +155,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Özet</h2>
-                        <textarea value={cvDetails.summary} onChange={(e) => setCvDetails({ ...cvDetails, summary: e.target.value })} />
+                        <textarea value={userData.summary} onChange={(e) => setUserData({ ...userData, summary: e.target.value })} />
                     </div>
                 );
 
@@ -146,7 +163,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>İş Deneyimi</h2>
-                        {cvDetails.experience.map((item, index) => (
+                        {userData.experience.map((item, index) => (
                             <div key={index}>
                                 <input type="text" placeholder="Şirket Adı" value={item.companyName} onChange={(e) => updateItem('experience', index, 'companyName', e.target.value)} />
                                 <input type="text" placeholder="Pozisyon" value={item.position} onChange={(e) => updateItem('experience', index, 'position', e.target.value)} />
@@ -164,7 +181,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Eğitim</h2>
-                        {cvDetails.education.map((item, index) => (
+                        {userData.education.map((item, index) => (
                             <div key={index}>
                                 <input type="text" placeholder="Okul Adı" value={item.schoolName} onChange={(e) => updateItem('education', index, 'schoolName', e.target.value)} />
                                 <input type="text" placeholder="Derece" value={item.degree} onChange={(e) => updateItem('education', index, 'degree', e.target.value)} />
@@ -182,7 +199,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Yetenekler</h2>
-                        {cvDetails.skills.map((skill, index) => (
+                        {userData.skills.map((skill, index) => (
                             <div key={index}>
                                 <input type="text" value={skill} onChange={(e) => updateItem('skills', index, '', e.target.value)} />
                                 <button onClick={() => removeItem('skills', index)}>Sil</button>
@@ -196,7 +213,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Diller</h2>
-                        {cvDetails.languages.map((language, index) => (
+                        {userData.languages.map((language, index) => (
                             <div key={index}>
                                 <input type="text" value={language} onChange={(e) => updateItem('languages', index, '', e.target.value)} />
                                 <button onClick={() => removeItem('languages', index)}>Sil</button>
@@ -210,7 +227,7 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Projeler</h2>
-                        {cvDetails.projects.map((project, index) => (
+                        {userData.projects.map((project, index) => (
                             <div key={index}>
                                 <input type="text" placeholder="Proje Adı" value={project.projectName} onChange={(e) => updateItem('projects', index, 'projectName', e.target.value)} />
                                 <textarea placeholder="Açıklama" value={project.description} onChange={(e) => updateItem('projects', index, 'description', e.target.value)} />
@@ -231,7 +248,7 @@ function EditCvDetail() {
         <div className='container mx-auto'>
             {
                 !isLoading ? (
-                    cvData.sections.map(section => (
+                    cvThemeData.sections.map(section => (
                         <div key={section}>
                             {renderSection(section)}
                         </div>
@@ -242,9 +259,9 @@ function EditCvDetail() {
             }
             <button
                 className='bg-blue-800 text-white'
-                onClick={() => saveCvDetails(storeUser.uid, cvDetails)}
+                onClick={() => saveCvDetails(storeUser.uid, userData)}
             >
-                Save
+                Next
             </button>
         </div>
     )
