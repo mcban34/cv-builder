@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { getDoc, doc, getFirestore, setDoc } from '../firebaseConfig';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams  } from 'react-router-dom';
 import useUserStore from '../store/useUserStore';
 
 
 function EditCvDetail() {
-    const { id } = useParams()
+    
+    const {id , themeId} = useParams()
     const db = getFirestore();
-
+    const navigate =  useNavigate()
     const storeUser = useUserStore(state => state.user);
     const [cvData, setCvData] = useState([])
     const [isLoading, setIsLoading] = useState(true)
@@ -38,6 +39,7 @@ function EditCvDetail() {
         fetchCvDetail();
     }, [id])
 
+    //!eğer kullanıcın girdiği bilgiler varsa, initial state içerisi doldurulur
     useEffect(() => {
         const fetchCvDetails = async (userId) => {
             if (!userId) return; //?Eğer userId yoksa, fonksiyonu sonlandır.
@@ -65,7 +67,9 @@ function EditCvDetail() {
         const docRef = doc(db, "users", userId, "cvDetails", "details");
         try {
             await setDoc(docRef, cvDetails, { merge: true });
+            navigate(`/editcvdetail/${id}/${themeId}/showcv`)
             console.log("CV details saved successfully!");
+
         } catch (error) {
             console.error("Error saving CV details:", error);
         }

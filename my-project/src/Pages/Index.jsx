@@ -31,7 +31,7 @@ function Index() {
       <div className="container mx-auto">
         <div className='flex'>
           {cvThemes.map(theme => (
-            <Link to={`/editcvdetail/${theme.id}`} key={theme.id}>
+            <Link to={`/editcvdetail/${theme.id}/${theme.themeId}`} key={theme.id}>
               <div className='w-4/12'>
                 <img src={theme.previewImage} alt="" />
                 <p className='text-red-300'>

@@ -7,6 +7,7 @@ import useUserStore from './store/useUserStore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
 import EditCvDetail from './Pages/EditCvDetail';
+import ShowCv from './Pages/ShowCv';
 
 
 function App() {
@@ -30,8 +31,6 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  // console.log(myUser);
-
  
 
   return (
@@ -39,7 +38,8 @@ function App() {
       <Routes>
         <Route path='/home' element={<Index />} />
         <Route path='' element={<Login />} />
-        <Route path='/editcvdetail/:id' element={<EditCvDetail/>} />
+        <Route path='/editcvdetail/:id/:themeId' element={<EditCvDetail/>} />
+        <Route path='/editcvdetail/:id/:themeId/showcv' element={<ShowCv/>} />
       </Routes>
     </>
   )
