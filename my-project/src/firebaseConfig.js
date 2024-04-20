@@ -9,6 +9,8 @@ import {
   getAuth
 } from "firebase/auth";
 
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 
 
 const firebaseConfig = {
@@ -37,5 +39,9 @@ export {
   signInWithPopup,
   collection,
   getDocs,
-  getDoc
+  getDoc,
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
 };

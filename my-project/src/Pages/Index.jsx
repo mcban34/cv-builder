@@ -12,6 +12,7 @@ function Index() {
   const logout = useUserStore(state => state.logoutUser);
   const { useCvThemeStore } = stores;
   const setStoreCvTheme = useCvThemeStore(state => state.setCvTheme);
+  const storeCvTheme = useCvThemeStore(state => state.setCvTheme);
 
   //!cvThemes koleksiyonu çekildi ve stateye kaydedildi
   useEffect(() => {

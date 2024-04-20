@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getDoc, doc, getFirestore, setDoc } from '../firebaseConfig';
+import { getDoc, doc, getFirestore, setDoc, getStorage, ref, uploadBytes, getDownloadURL } from '../firebaseConfig';
 import { useNavigate, useParams } from 'react-router-dom';
 import useUserStore from '../store/useUserStore';
 import stores from '../store/useCvSrote';
@@ -13,7 +13,7 @@ function EditCvDetail() {
     const [isLoading, setIsLoading] = useState(true)
     const [cvThemeData, setCvThemeData] = useState([])
     const [userData, setUserData] = useState({
-        personalInfo: { firstName: '', lastName: '', email: '', phone: '' },
+        personalInfo: { firstName: '', lastName: '', email: '', phone: '', image: null },
         summary: '',
         experience: [{ companyName: '', position: '', startDate: '', endDate: '', description: '' }],
         education: [{ schoolName: '', degree: '', fieldOfStudy: '', startDate: '', endDate: '' }],
@@ -27,6 +27,9 @@ function EditCvDetail() {
     const setStoreUserData = useCvDataStore(state => state.setCvData);
     const storeUserData = useCvDataStore(state => state.cvData);
 
+    useEffect(() => {
+        console.log(userData);
+    }, [userData])
     //!id'ye göre istek atıldı cv tema dataları state'e aktarıldı
     useEffect(() => {
         if (storeCvTheme != null) {
@@ -54,7 +57,7 @@ function EditCvDetail() {
     useEffect(() => {
         const fetchCvDetails = async (userId) => {
             if (!userId) return; //?Eğer userId yoksa, fonksiyonu sonlandır.
-            
+
             if (storeUserData != null) {
                 setUserData(storeUserData)
             }
@@ -81,16 +84,39 @@ function EditCvDetail() {
 
     //!save button
     const saveCvDetails = async (userId, cvDetails) => {
-        const docRef = doc(db, "users", userId, "cvDetails", "details");
-        try {
-            await setDoc(docRef, cvDetails, { merge: true });
-            navigate(`/editcvdetail/${id}/${themeId}/showcv`)
-            console.log("CV details saved successfully!");
-
-        } catch (error) {
-            console.error("Error saving CV details:", error);
+        if (userData.personalInfo.image instanceof File) {
+            try {
+                const imageUrl = await uploadImageToStorage(userData.personalInfo.image, userId);
+                const updatedUserData = {
+                    ...cvDetails,
+                    personalInfo: {
+                        ...cvDetails.personalInfo,
+                        image: imageUrl
+                    }
+                };
+    
+                const docRef = doc(db, "users", userId, "cvDetails", "details");
+                await setDoc(docRef, updatedUserData, { merge: true });
+                console.log("CV details saved successfully!");
+                navigate(`/editcvdetail/${id}/${themeId}/showcv`);
+                setStoreUserData(userData)
+            } catch (error) {
+                console.error("Error saving CV details:", error);
+            }
+        } else {
+            const docRef = doc(db, "users", userId, "cvDetails", "details");
+            try {
+                await setDoc(docRef, cvDetails, { merge: true });
+                console.log("CV details saved successfully!");
+                navigate(`/editcvdetail/${id}/${themeId}/showcv`);
+                setStoreUserData(userData)
+            } catch (error) {
+                console.error("Error saving CV details:", error);
+            }
         }
     };
+
+    
 
     //!Eleman Ekle
     const addItem = (section) => {
@@ -107,6 +133,27 @@ function EditCvDetail() {
             [section]: prevState[section].filter((_, i) => i !== index)
         }));
     };
+
+    function handleFileChange(event) {
+        const file = event.target.files[0];
+        if (file) {
+            setUserData(prev => ({
+                ...prev,
+                personalInfo: {
+                    ...prev.personalInfo,
+                    image: file
+                }
+            }));
+        }
+    }
+
+    async function uploadImageToStorage(file, userId) {
+        const storage = getStorage();
+        const storageRef = ref(storage, `userImages/${userId}/${file.name}`);
+        const snapshot = await uploadBytes(storageRef, file);
+        return getDownloadURL(snapshot.ref);
+    }
+
 
     //!Eleman Güncelle
     const updateItem = (section, index, field, value) => {
@@ -144,6 +191,8 @@ function EditCvDetail() {
                 return (
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Kişisel Bilgiler</h2>
+                        <input onChange={handleFileChange} type="file" /> <br />
+                        <img src={userData.personalInfo?.image} width={300} alt="" />
                         <input type="text" placeholder="İsim" value={userData.personalInfo.firstName} onChange={(e) => updateItem('personalInfo', null, 'firstName', e.target.value)} />
                         <input type="text" placeholder="Soyisim" value={userData.personalInfo.lastName} onChange={(e) => updateItem('personalInfo', null, 'lastName', e.target.value)} />
                         <input type="email" placeholder="Email" value={userData.personalInfo.email} onChange={(e) => updateItem('personalInfo', null, 'email', e.target.value)} />

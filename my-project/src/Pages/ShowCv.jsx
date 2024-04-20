@@ -3,7 +3,21 @@ import { useParams } from 'react-router-dom'
 import stores from '../store/useCvSrote';
 import { getDoc, doc, getFirestore, setDoc } from '../firebaseConfig';
 import useUserStore from '../store/useUserStore';
+import Classic from '../Components/Themes/Classic';
+import Modern from '../Components/Themes/Modern';
 
+const themes = {
+    classic: {
+        name: "Modern",
+        component: Classic,
+        layout: "modern-layout.css"
+    },
+    modern: {
+        name: "Classic",
+        component: Modern,
+        layout: "classic-layout.css"
+    }
+};
 
 function ShowCv() {
     const db = getFirestore();
@@ -24,6 +38,9 @@ function ShowCv() {
 
     const storeUserData = useCvDataStore(state => state.cvData);
     const storeCvTheme = useCvThemeStore(state => state.cvTheme);
+
+    const ThemeComponent = themes[themeId].component;
+
 
     useEffect(() => {
         if (storeCvTheme != null) {
@@ -51,7 +68,7 @@ function ShowCv() {
     useEffect(() => {
         const fetchCvDetails = async (userId) => {
             if (!userId) return; //?Eğer userId yoksa, fonksiyonu sonlandır.
-            
+
             if (storeUserData != null) {
                 setUserData(storeUserData)
             }
@@ -75,11 +92,13 @@ function ShowCv() {
         }
     }, [storeUserLogin]);
 
-    console.log("userData",userData)
-    console.log("cvThemeData",cvThemeData)
+    console.log("userData", userData)
+    console.log("cvThemeData", cvThemeData)
 
     return (
-        <div>ShowCv</div>
+        <div>
+            <ThemeComponent />
+        </div>
     )
 }
 
