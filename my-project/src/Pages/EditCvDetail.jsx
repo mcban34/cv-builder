@@ -27,9 +27,6 @@ function EditCvDetail() {
     const setStoreUserData = useCvDataStore(state => state.setCvData);
     const storeUserData = useCvDataStore(state => state.cvData);
 
-    useEffect(() => {
-        console.log(userData);
-    }, [userData])
     //!id'ye göre istek atıldı cv tema dataları state'e aktarıldı
     useEffect(() => {
         if (storeCvTheme != null) {

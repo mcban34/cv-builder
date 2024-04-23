@@ -44,13 +44,10 @@ function ShowCv() {
 
     useEffect(() => {
         if (storeCvTheme != null) {
-            console.log("zustand çalıştı cvTheme");
             const findTheme = storeCvTheme.find(item => item.themeId == themeId)
             setCvThemeData(findTheme)
         }
         else {
-            console.log("istek çalıştı cvTheme");
-
             const fetchCvDetail = async () => {
                 const docRef = doc(db, "cvThemes", id);
                 const docSnap = await getDoc(docRef);
@@ -92,12 +89,12 @@ function ShowCv() {
         }
     }, [storeUserLogin]);
 
-    console.log("userData", userData)
-    console.log("cvThemeData", cvThemeData)
-
     return (
         <div>
-            <ThemeComponent />
+            <ThemeComponent
+                userData={userData}
+                cvThemeData={cvThemeData}
+            />
         </div>
     )
 }
