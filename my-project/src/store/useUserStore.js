@@ -5,6 +5,8 @@ const db = getFirestore();
 
 const useUserStore = create(set => ({
     user: null,
+    localImage: "",
+    updateLocalImage: (image) => set({ localImage: image }),
     setUser: (user) => set({ user }),
     loginUser: async (email, password) => {
         try {
@@ -46,7 +48,7 @@ const useUserStore = create(set => ({
             console.error("Google ile giriş hatası: ", error.message);
             throw error;
         }
-    }
+    },
 }));
 
 export default useUserStore;

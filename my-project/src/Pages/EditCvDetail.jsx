@@ -21,11 +21,12 @@ function EditCvDetail() {
         languages: [''],
         projects: [{ projectName: '', description: '', url: '' }]
     });
-
+    
     const { useCvThemeStore, useCvDataStore } = stores;
     const storeCvTheme = useCvThemeStore(state => state.cvTheme);
     const setStoreUserData = useCvDataStore(state => state.setCvData);
     const storeUserData = useCvDataStore(state => state.cvData);
+    const { localImage, updateLocalImage } = useUserStore();
 
     //!id'ye göre istek atıldı cv tema dataları state'e aktarıldı
     useEffect(() => {
@@ -91,7 +92,7 @@ function EditCvDetail() {
                         image: imageUrl
                     }
                 };
-    
+
                 const docRef = doc(db, "users", userId, "cvDetails", "details");
                 await setDoc(docRef, updatedUserData, { merge: true });
                 console.log("CV details saved successfully!");
@@ -113,7 +114,7 @@ function EditCvDetail() {
         }
     };
 
-    
+
 
     //!Eleman Ekle
     const addItem = (section) => {
@@ -138,9 +139,10 @@ function EditCvDetail() {
                 ...prev,
                 personalInfo: {
                     ...prev.personalInfo,
-                    image: file
+                    image: file,
                 }
             }));
+            updateLocalImage(file)
         }
     }
 
@@ -189,7 +191,7 @@ function EditCvDetail() {
                     <div className='mb-5'>
                         <h2 className='font-bold text-lg text-red-400'>Kişisel Bilgiler</h2>
                         <input onChange={handleFileChange} type="file" /> <br />
-                        <img src={userData.personalInfo?.image} width={300} alt="" />
+                        <img src={localImage != "" ? URL.createObjectURL(localImage) : userData.personalInfo?.image} width={300} alt="" />
                         <input type="text" placeholder="İsim" value={userData.personalInfo.firstName} onChange={(e) => updateItem('personalInfo', null, 'firstName', e.target.value)} />
                         <input type="text" placeholder="Soyisim" value={userData.personalInfo.lastName} onChange={(e) => updateItem('personalInfo', null, 'lastName', e.target.value)} />
                         <input type="email" placeholder="Email" value={userData.personalInfo.email} onChange={(e) => updateItem('personalInfo', null, 'email', e.target.value)} />

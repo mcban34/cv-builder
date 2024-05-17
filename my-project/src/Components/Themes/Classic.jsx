@@ -1,59 +1,48 @@
 import React from 'react'
-import { Font, Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import { Font, Document, Page, Text, View, StyleSheet, PDFViewer, PDFDownloadLink, Image } from '@react-pdf/renderer';
+import useUserStore from '../../store/useUserStore';
 
 
 function Classic({ userData, cvThemeData }) {
-  console.log("classic çalıştı", userData, cvThemeData)
+  const { localImage, updateLocalImage } = useUserStore();
 
-  // const styles = StyleSheet.create({
-  //   page: {
-  //     // flexDirection: 'row',
-  //     fontSize: 12,
-  //     padding: 5,
-  //     backgroundColor: '#E4E4E4',
-  //     fontFamily: 'Roboto'
-  //   },
-  //   section: {
-  //     // margin: 10,
-  //     // padding: 10,
-  //     // flexGrow: 1,
-  //   },
-  // });
-  // Font.register({
-  //   family: "Roboto",
-  //   src:
-  //     "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf"
-  // });
+  Font.register({
+    family: "Roboto",
+    src:
+      "https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-light-webfont.ttf"
+  });
 
   const styles = StyleSheet.create({
     page: {
       flexDirection: 'column',
       backgroundColor: '#FFF',
-      padding: 30
+      padding: 20,
+      fontFamily: 'Roboto'
     },
     personalInfo: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 10
+      marginBottom: 5
     },
-    header: {
-      fontSize: 24,
-      fontFamily: 'Helvetica-Bold'
+    image: {
+      width: 100,
+      height: 100,
+      marginRight: 20,
+      borderRadius: 50
     },
-    subHeader: {
-      fontSize: 18,
-      fontFamily: 'Helvetica'
+    name: {
+      fontSize: 15,
+      fontWeight: 'bold'
     },
-    text: {
+    contactInfo: {
       fontSize: 12,
-      fontFamily: 'Helvetica'
+      color: '#666'
     },
     section: {
-      marginVertical: 10,
+      marginVertical: 5
     },
     sectionHeader: {
-      fontSize: 16,
-      fontFamily: 'Helvetica-Bold',
+      fontSize: 14,
+      fontWeight: 'bold',
       marginBottom: 5
     },
     listItem: {
@@ -63,51 +52,127 @@ function Classic({ userData, cvThemeData }) {
     bulletPoint: {
       width: 10,
       fontSize: 10,
+      marginRight: 2
     },
     listItemContent: {
-      flex: 1,
+      flex: 1
+    },
+    jobTitle: {
+      fontSize: 12,
+      fontWeight: 'bold'
+    },
+    company: {
+      fontSize: 14,
+      color: '#666'
+    },
+    dateRange: {
+      fontSize: 10,
+      color: '#999'
+    },
+    description: {
+      fontSize: 10
+    },
+    personalText: {
+      marginTop: 20
+    },
+    skills: {
+      flexDirection: 'row',
+      fontSize: 12
+    },
+    projectDesc: {
+      fontSize: 10,
+      color: '#666'
     }
+
   });
 
   const MyDocument = ({ userData }) => (
     <Document>
       <Page style={styles.page}>
+        {/* Kişisel */}
         <View style={styles.personalInfo}>
-          <Text style={styles.header}>{`${userData.personalInfo.firstName} ${userData.personalInfo.lastName}`}</Text>
-          <Text style={styles.text}>{userData.personalInfo.phone} • {userData.personalInfo.email}</Text>
+          <Image
+            style={styles.image}
+            src={userData.personalInfo.image}
+            allowDangerousPaths={true}
+          />
+          <View style={styles.personalText}>
+            <Text style={styles.name}>{`${userData.personalInfo.firstName} ${userData.personalInfo.lastName}`}</Text>
+            <Text style={styles.contactInfo}>{userData.personalInfo.phone} • {userData.personalInfo.email}</Text>
+          </View>
         </View>
 
+        {/* Açıklama */}
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Summary</Text>
-          <Text style={styles.text}>{userData.summary}</Text>
+          <Text style={styles.description}>{userData.summary}</Text>
         </View>
 
+        {/* Deneyim */}
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Experience</Text>
           {userData.experience.map((item, index) => (
             <View key={index} style={styles.listItem}>
               <Text style={styles.bulletPoint}>•</Text>
               <View style={styles.listItemContent}>
-                <Text style={styles.subHeader}>{item.position}, {item.companyName}</Text>
-                <Text style={styles.text}>{item.startDate} - {item.endDate}</Text>
-                <Text style={styles.text}>{item.description}</Text>
+                <Text style={styles.jobTitle}>{item.companyName} - {item.position}</Text>
+                {/* <Text style={styles.company}></Text> */}
+                <Text style={styles.dateRange}>{item.startDate} - {item.endDate}</Text>
+                <Text style={styles.description}>{item.description}</Text>
               </View>
             </View>
           ))}
         </View>
 
+        {/* Mezuniyet */}
         <View style={styles.section}>
           <Text style={styles.sectionHeader}>Education</Text>
           {userData.education.map((item, index) => (
             <View key={index} style={styles.listItem}>
               <Text style={styles.bulletPoint}>•</Text>
               <View style={styles.listItemContent}>
-                <Text style={styles.subHeader}>{item.degree}, {item.fieldOfStudy}</Text>
-                <Text style={styles.text}>{item.schoolName}</Text>
-                <Text style={styles.text}>{item.startDate} - {item.endDate}</Text>
+                <Text style={styles.jobTitle}>{item.degree}</Text>
+                <Text style={styles.company}>{item.fieldOfStudy}</Text>
+                <Text style={styles.dateRange}>{item.startDate} - {item.endDate}</Text>
+                <Text style={styles.description}>{item.schoolName}</Text>
               </View>
             </View>
           ))}
+        </View>
+
+        {/* Projeler */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Projects</Text>
+          {userData.projects.map((project, index) => (
+            <View key={index} style={styles.listItem}>
+              <Text style={styles.bulletPoint}>•</Text>
+              <View style={styles.listItemContent}>
+                <Text style={styles.jobTitle}>{project.projectName}</Text>
+                <Text style={styles.projectDesc}>{project.description}</Text>
+                <Text style={styles.description}>URL: {project.url}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {/* Beceriler */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Skills</Text>
+          <View style={styles.skills}>
+            {userData.skills.map((skill, index) => (
+              <Text key={index} >{skill}, </Text>
+            ))}
+          </View>
+        </View>
+
+        {/* Diller */}
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Languages</Text>
+          <View style={styles.skills}>
+            {userData.languages.map((language, index) => (
+              <Text key={index} style={styles.description}>{language}, </Text>
+            ))}
+          </View>
         </View>
       </Page>
     </Document>
@@ -115,21 +180,17 @@ function Classic({ userData, cvThemeData }) {
 
   return (
     <div className='container mx-auto'>
-      <section className='personalInfo flex justify-between'>
-        <div className='w-[20%]'>
-          <img src={userData.personalInfo.image} width={200} alt="" />
-        </div>
-        <div className='w-[80%] flex justify-center'>
-          <div className='w-[80%] text-center'>
-            <h2 className='font-bold text-2xl'>{userData.personalInfo.firstName} {userData.personalInfo.lastName}</h2>
-            <p>Phone : {userData.personalInfo.phone}</p>
-            <p>Email : {userData.personalInfo.email}</p>
-            <span>
-              {userData.summary}
-            </span>
-          </div>
-        </div>
-      </section>
+      <div className='h-[70vh]'>
+        <PDFViewer
+          showToolbar={false}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          <MyDocument userData={userData} />
+        </PDFViewer>
+      </div>
 
       <PDFDownloadLink document={<MyDocument userData={userData} />} fileName={`${userData.personalInfo.firstName}_${userData.personalInfo.lastName}.pdf`}>
         {({ blob, url, loading, error }) =>

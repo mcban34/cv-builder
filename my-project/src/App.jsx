@@ -1,48 +1,61 @@
-import './App.css'
-import { Routes, Route, useNavigate } from 'react-router-dom'
-import Index from './Pages/Index'
-import Login from './Pages/Login'
-
-import useUserStore from './store/useUserStore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useEffect } from 'react';
+import './App.css';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import Index from './Pages/Index';
+import Login from './Pages/Login';
 import EditCvDetail from './Pages/EditCvDetail';
 import ShowCv from './Pages/ShowCv';
-
+import { useEffect, useState } from 'react';
+import useUserStore from './store/useUserStore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 function App() {
   const auth = getAuth();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const setUser = useUserStore(state => state.setUser);
-  const myUser = useUserStore(state => state.user);
-  // const Loginuser = useUserStore(user);
+  const user = useUserStore(state => state.user);
+  const [loading, setLoading] = useState(true);
 
-  //!giriş kontrolü sürekli sağlandı
+  useEffect(() => {
+    console.log("user", user)
+  }, [user])
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // navigate('/home');
-        setUser(user)
+        setUser(user);
+      } else {
+        setUser(null);
+        navigate('/');
       }
-      // else {
-      //   navigate('/');
-      // }
+      setLoading(false);
     });
-    return () => unsubscribe();
-  }, []);
 
- 
+    return () => unsubscribe();
+  }, [auth, navigate, setUser]);
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <>
       <Routes>
-        <Route path='/home' element={<Index />} />
-        <Route path='' element={<Login />} />
-        <Route path='/editcvdetail/:id/:themeId' element={<EditCvDetail/>} />
-        <Route path='/editcvdetail/:id/:themeId/showcv' element={<ShowCv/>} />
+        <Route path="/" element={user ? <Index /> : <Login />} />
+        <Route
+          path="/home"
+          element={user ? <Index /> : <Login />}
+        />
+        <Route
+          path="/editcvdetail/:id/:themeId"
+          element={user ? <EditCvDetail /> : <Login />}
+        />
+        <Route
+          path="/editcvdetail/:id/:themeId/showcv"
+          element={user ? <ShowCv /> : <Login />}
+        />
       </Routes>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

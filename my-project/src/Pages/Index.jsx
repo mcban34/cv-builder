@@ -10,9 +10,9 @@ function Index() {
   const [cvThemes, setCvThemes] = useState([]);
   const db = getFirestore();
   const logout = useUserStore(state => state.logoutUser);
-  const { useCvThemeStore } = stores;
+  const { useCvThemeStore, useCvDataStore } = stores;
   const setStoreCvTheme = useCvThemeStore(state => state.setCvTheme);
-  const storeCvTheme = useCvThemeStore(state => state.setCvTheme);
+  const setStoreCvData = useCvDataStore(state => state.setCvData);
 
   //!cvThemes koleksiyonu çekildi ve stateye kaydedildi
   useEffect(() => {
