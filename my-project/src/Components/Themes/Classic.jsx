@@ -131,10 +131,9 @@ function Classic({ userData, cvThemeData }) {
             <View key={index} style={styles.listItem}>
               <Text style={styles.bulletPoint}>•</Text>
               <View style={styles.listItemContent}>
-                <Text style={styles.jobTitle}>{item.degree}</Text>
                 <Text style={styles.company}>{item.fieldOfStudy}</Text>
                 <Text style={styles.dateRange}>{item.startDate} - {item.endDate}</Text>
-                <Text style={styles.description}>{item.schoolName}</Text>
+                <Text style={styles.description}>{item.schoolName} - {item.degree}</Text>
               </View>
             </View>
           ))}

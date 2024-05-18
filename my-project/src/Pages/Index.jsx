@@ -26,32 +26,23 @@ function Index() {
 
   return (
     <div>
-      <h2>Burası Ana Sayfa</h2>
       <button onClick={logout}>çıkış yap</button>
-      <br /><br /><br />
-
-      <h2>CV Themes</h2>
-
 
       <div className="container mx-auto">
+        <h2>Lütfen Tema Seçiniz</h2>
         <div className='flex'>
-          {cvThemes.map(theme => (
-            <Link to={`/editcvdetail/${theme.id}/${theme.themeId}`} key={theme.id}>
-              <div className='w-4/12'>
+          {cvThemes.map((theme,index) => (
+            <div className='w-3/12 m-2' key={index}>
+              <Link to={`/editcvdetail/${theme.id}/${theme.themeId}`} key={theme.id}>
                 <img src={theme.previewImage} alt="" />
                 <p className='text-red-300'>
                   {theme.name} - {theme.description}
                 </p>
-              </div>
-            </Link>
+              </Link>
+            </div>
           ))}
         </div>
       </div>
-
-
-      <br /><br /><br />
-
-      <Link to={"/"}>Go login</Link>
     </div>
   )
 }
