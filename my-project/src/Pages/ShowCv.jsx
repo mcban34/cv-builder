@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import stores from '../store/useCvSrote';
 import { getDoc, doc, getFirestore, setDoc } from '../firebaseConfig';
 import useUserStore from '../store/useUserStore';
@@ -91,10 +91,21 @@ function ShowCv() {
 
     return (
         <div>
-            <ThemeComponent
-                userData={userData}
-                cvThemeData={cvThemeData}
-            />
+            <div className='translate-y-[-10%]'>
+                <ThemeComponent
+                    userData={userData}
+                    cvThemeData={cvThemeData}
+                />
+            </div>
+            <div className='fixed right-10 bottom-10 bg-white p-5 shadow-lg rounded-md'>
+                <Link
+                    to={"/home"}
+                    className='bg-themeColor75 py-2 text-[18px] px-3 mr-2 rounded-md text-white'
+                >
+                    Back
+                </Link>
+
+            </div>
         </div>
     )
 }

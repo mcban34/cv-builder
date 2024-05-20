@@ -42,11 +42,11 @@ const LoginForm = () => {
             <>
                 <div>
                     <form onSubmit={handleloginSubmit} className="w-full p-6 bg-white rounded-lg shadow-md">
-                        <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Giriş Yap</h2>
+                        <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Login</h2>
 
                         <div className="mb-4">
                             <label className="block mb-2 text-sm font-bold text-gray-700">
-                                E-posta:
+                                E-mail:
                                 <input
                                     type="email"
                                     value={user.login.email}
@@ -59,7 +59,7 @@ const LoginForm = () => {
 
                         <div className="mb-6">
                             <label className="block mb-2 text-sm font-bold text-gray-700">
-                                Şifre:
+                                Password:
                                 <input
                                     type="password"
                                     value={user.login.password}
@@ -72,7 +72,7 @@ const LoginForm = () => {
 
                         <div className="flex items-center justify-between">
                             <button type="submit" className="w-full px-4 py-2 font-bold text-white bg-themeColor100 duration-300 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-                                Giriş Yap
+                                Login
                             </button>
                         </div>
 
@@ -83,7 +83,7 @@ const LoginForm = () => {
                             onClick={loginGoogle}
                             className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-lg hover:bg-red-700 duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                         >
-                            Google İle Giriş
+                            Login With Google
                         </button>
                     </form>
                 </div>
@@ -95,11 +95,11 @@ const LoginForm = () => {
         return (
             <>
                 <form onSubmit={handleRegisterSubmit} className="w-full p-6 bg-white rounded-lg shadow-md">
-                    <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Kayıt Ol</h2>
+                    <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Register</h2>
 
                     <div className="mb-4">
                         <label className="block mb-2 text-sm font-bold text-gray-700">
-                            E-posta:
+                            E-mail:
                             <input
                                 type="email"
                                 value={user.register.email}
@@ -112,7 +112,7 @@ const LoginForm = () => {
 
                     <div className="mb-6">
                         <label className="block mb-2 text-sm font-bold text-gray-700">
-                            Şifre:
+                            Password:
                             <input
                                 type="password"
                                 value={user.register.password}
@@ -125,7 +125,7 @@ const LoginForm = () => {
 
                     <div className="flex items-center justify-between">
                         <button type="submit" className="w-full px-4 py-2 font-bold text-white bg-themeColor100 duration-300 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-                            Kayıt Ol
+                            Register
                         </button>
                     </div>
 
@@ -136,7 +136,7 @@ const LoginForm = () => {
                         onClick={loginGoogle}
                         className="w-full px-4 py-2 font-bold text-white bg-red-500 rounded-lg hover:bg-red-700 duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
                     >
-                        Google İle Kayıt
+                        Register With Google
                     </button>
                 </form>
             </>

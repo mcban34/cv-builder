@@ -191,11 +191,13 @@ function Classic({ userData, cvThemeData }) {
         </PDFViewer>
       </div>
 
-      <PDFDownloadLink document={<MyDocument userData={userData} />} fileName={`${userData.personalInfo.firstName}_${userData.personalInfo.lastName}.pdf`}>
-        {({ blob, url, loading, error }) =>
-          loading ? 'Loading document...' : 'Download now!'
-        }
-      </PDFDownloadLink>
+      <div className='mt-5 flex justify-center'>
+        <PDFDownloadLink className='bg-green-500 text-white p-5 rounded-xl' document={<MyDocument userData={userData} />} fileName={`${userData.personalInfo.firstName}_${userData.personalInfo.lastName}.pdf`}>
+          {({ blob, url, loading, error }) =>
+            loading ? 'Loading document...' : 'Download now!'
+          }
+        </PDFDownloadLink>
+      </div>
 
     </div>
   )
